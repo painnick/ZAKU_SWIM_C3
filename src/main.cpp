@@ -38,26 +38,44 @@ void setup() {
 
   digitalWrite(PIN_MOTOR1, HIGH);
   digitalWrite(PIN_MOTOR2, LOW);
-
-
 }
 
+int rest = 0;
+
 void loop() {
+  rest = random(12);
+
   bodyServo.easeTo(0, DEGREES_PER_SECOND);
-  for(int i = 0; i < 2; i ++)
-    blinkEye();
+  if (rest == 0) {
+    digitalWrite(PIN_MOTOR1, LOW);
+    for (int i = 0; i < 2; i++)
+      blinkEye();
+    digitalWrite(PIN_MOTOR1, HIGH);
+  }
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  for(int i = 0; i < 3; i ++)
-    blinkEye();
+  if (rest == 1) {
+    digitalWrite(PIN_MOTOR1, LOW);
+    for (int i = 0; i < 3; i++)
+      blinkEye();
+    digitalWrite(PIN_MOTOR1, HIGH);
+  }
 
   bodyServo.easeTo(180, DEGREES_PER_SECOND);
-  for(int i = 0; i < 2; i ++)
-    blinkEye();
+  if (rest == 2) {
+    digitalWrite(PIN_MOTOR1, LOW);
+    for (int i = 0; i < 2; i++)
+      blinkEye();
+    digitalWrite(PIN_MOTOR1, HIGH);
+  }
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  for(int i = 0; i < 3; i ++)
-    blinkEye();
+  if (rest == 3) {
+    digitalWrite(PIN_MOTOR1, LOW);
+    for (int i = 0; i < 5; i++)
+      blinkEye();
+    digitalWrite(PIN_MOTOR1, HIGH);
+  }
 }
 
 void blinkEye() {
