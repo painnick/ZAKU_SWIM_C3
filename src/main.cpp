@@ -44,19 +44,19 @@ void setup() {
 
 void loop() {
   bodyServo.easeTo(0, DEGREES_PER_SECOND);
+  for(int i = 0; i < 2; i ++)
+    blinkEye();
+
+  bodyServo.easeTo(90, DEGREES_PER_SECOND);
   for(int i = 0; i < 3; i ++)
     blinkEye();
 
-  bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  for(int i = 0; i < 5; i ++)
-    blinkEye();
-
   bodyServo.easeTo(180, DEGREES_PER_SECOND);
-  for(int i = 0; i < 5; i ++)
+  for(int i = 0; i < 2; i ++)
     blinkEye();
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  for(int i = 0; i < 5; i ++)
+  for(int i = 0; i < 3; i ++)
     blinkEye();
 }
 
