@@ -10,12 +10,14 @@
 
 #include "common.h"
 
-#define EYE_NORMAL 23
-#define EYE_BRIGHT 221
+#define EYE_MINIMUM 12
+#define EYE_MAXIMUM 221
 
 #define DEGREES_PER_SECOND 30
 
 ServoEasing bodyServo;
+
+void blinkEye();
 
 void setup() {
   ESP_LOGI(MAIN_TAG, "Setup!");
@@ -27,7 +29,8 @@ void setup() {
   ESP_LOGI(MAIN_TAG, "Setup Eye");
   ledcSetup(CH_EYE, 1000, 8);
   ledcAttachPin(PIN_EYE, CH_EYE);
-  ledcWrite(CH_EYE, EYE_NORMAL);
+
+  blinkEye();
 
   ESP_LOGI(MAIN_TAG, "Setup Legs");
   pinMode(PIN_MOTOR1, OUTPUT);
@@ -35,26 +38,38 @@ void setup() {
 
   digitalWrite(PIN_MOTOR1, HIGH);
   digitalWrite(PIN_MOTOR2, LOW);
+
+
 }
 
 void loop() {
   bodyServo.easeTo(0, DEGREES_PER_SECOND);
-  delay(2000);
+  for(int i = 0; i < 3; i ++)
+    blinkEye();
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  digitalWrite(PIN_MOTOR1, LOW);
-  ledcWrite(CH_EYE, EYE_BRIGHT);
-  delay(1000);
-  ledcWrite(CH_EYE, EYE_NORMAL);
-  digitalWrite(PIN_MOTOR1, HIGH);
+  for(int i = 0; i < 5; i ++)
+    blinkEye();
 
   bodyServo.easeTo(180, DEGREES_PER_SECOND);
-  delay(2000);
+  for(int i = 0; i < 5; i ++)
+    blinkEye();
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  digitalWrite(PIN_MOTOR1, LOW);
-  ledcWrite(CH_EYE, EYE_BRIGHT);
-  delay(3000);
-  ledcWrite(CH_EYE, EYE_NORMAL);
-  digitalWrite(PIN_MOTOR1, HIGH);
+  for(int i = 0; i < 5; i ++)
+    blinkEye();
+}
+
+void blinkEye() {
+  for (int i = EYE_MINIMUM; i < EYE_MAXIMUM; i += 36) {
+    ledcWrite(CH_EYE, i);
+    delay(100);
+  }
+  ledcWrite(CH_EYE, EYE_MAXIMUM);
+  delay(600);
+  for (int i = EYE_MAXIMUM; i > EYE_MINIMUM; i -= 48) {
+    ledcWrite(CH_EYE, i);
+    delay(100);
+  }
+  delay(300);
 }
