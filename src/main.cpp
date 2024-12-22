@@ -8,7 +8,6 @@
 
 #include <ServoEasing.hpp>
 
-// Controllers
 #include "common.h"
 
 #define EYE_NORMAL 23
