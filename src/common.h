@@ -11,3 +11,4 @@
 #define PIN_MOTOR2 21
 
 #define CH_EYE 3
+#define CH_MOTOR1 4

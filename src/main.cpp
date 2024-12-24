@@ -15,9 +15,15 @@
 
 #define DEGREES_PER_SECOND 30
 
+#define MOTOR_SPEED 143
+
 ServoEasing bodyServo;
 
 void blinkEye();
+
+void motorStart(uint32_t speed = MOTOR_SPEED);
+
+void motorStop();
 
 void setup() {
   ESP_LOGI(MAIN_TAG, "Setup!");
@@ -33,48 +39,39 @@ void setup() {
   blinkEye();
 
   ESP_LOGI(MAIN_TAG, "Setup Legs");
-  pinMode(PIN_MOTOR1, OUTPUT);
+  ledcSetup(CH_MOTOR1, 1000, 8);
+  ledcAttachPin(PIN_MOTOR1, CH_MOTOR1);
   pinMode(PIN_MOTOR2, OUTPUT);
 
-  digitalWrite(PIN_MOTOR1, HIGH);
   digitalWrite(PIN_MOTOR2, LOW);
+  motorStart();
 }
 
 int rest = 0;
 
 void loop() {
-  rest = random(12);
+  rest = random(3);
 
-  bodyServo.easeTo(0, DEGREES_PER_SECOND);
-  if (rest == 0) {
-    digitalWrite(PIN_MOTOR1, LOW);
-    for (int i = 0; i < 2; i++)
-      blinkEye();
-    digitalWrite(PIN_MOTOR1, HIGH);
-  }
+  bodyServo.easeTo(30, DEGREES_PER_SECOND);
+  delay(2000);
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
   if (rest == 1) {
-    digitalWrite(PIN_MOTOR1, LOW);
+    motorStop();
     for (int i = 0; i < 3; i++)
       blinkEye();
-    digitalWrite(PIN_MOTOR1, HIGH);
+    motorStart();
   }
 
-  bodyServo.easeTo(180, DEGREES_PER_SECOND);
-  if (rest == 2) {
-    digitalWrite(PIN_MOTOR1, LOW);
-    for (int i = 0; i < 2; i++)
-      blinkEye();
-    digitalWrite(PIN_MOTOR1, HIGH);
-  }
+  bodyServo.easeTo(150, DEGREES_PER_SECOND);
+  delay(2000);
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
-  if (rest == 3) {
-    digitalWrite(PIN_MOTOR1, LOW);
-    for (int i = 0; i < 5; i++)
+  if (rest == 2) {
+    motorStop();
+    for (int i = 0; i < 3; i++)
       blinkEye();
-    digitalWrite(PIN_MOTOR1, HIGH);
+    motorStart();
   }
 }
 
@@ -90,4 +87,14 @@ void blinkEye() {
     delay(100);
   }
   delay(300);
+}
+
+void motorStart(uint32_t speed) {
+  ledcWrite(CH_MOTOR1, 255);
+  delay(100);
+  ledcWrite(CH_MOTOR1, speed);
+}
+
+void motorStop() {
+  ledcWrite(CH_MOTOR1, 0);
 }
