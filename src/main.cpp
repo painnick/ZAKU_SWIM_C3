@@ -15,7 +15,7 @@
 
 #define DEGREES_PER_SECOND 30
 
-#define MOTOR_SPEED 143
+#define MOTOR_SPEED 128
 
 ServoEasing bodyServo;
 
@@ -33,7 +33,7 @@ void setup() {
   bodyServo.attach(PIN_SERVO1_TABLE, 90);
 
   ESP_LOGI(MAIN_TAG, "Setup Eye");
-  ledcSetup(CH_EYE, 1000, 8);
+  ledcSetup(CH_EYE, 5000, 8);
   ledcAttachPin(PIN_EYE, CH_EYE);
 
   blinkEye();
@@ -91,7 +91,7 @@ void blinkEye() {
 
 void motorStart(uint32_t speed) {
   ledcWrite(CH_MOTOR1, 255);
-  delay(100);
+  delay(200);
   ledcWrite(CH_MOTOR1, speed);
 }
 
