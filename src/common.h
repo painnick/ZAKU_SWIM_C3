@@ -9,6 +9,7 @@
 #define PIN_EYE 7 // OK
 #define PIN_MOTOR1 20
 #define PIN_MOTOR2 21
+#define PIN_SENSOR1 4
 
 #define CH_EYE 3
 #define CH_MOTOR1 4

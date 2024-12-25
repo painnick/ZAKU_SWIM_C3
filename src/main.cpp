@@ -15,15 +15,23 @@
 
 #define DEGREES_PER_SECOND 30
 
-#define MOTOR_SPEED 128
+#define MOTOR_SPEED_NORMAL 128
 
 ServoEasing bodyServo;
 
+int eyeBright = EYE_MINIMUM;
+
+uint32_t motorSpeed = MOTOR_SPEED_NORMAL;
+
 void blinkEye();
 
-void motorStart(uint32_t speed = MOTOR_SPEED);
+void motorStart();
 
 void motorStop();
+
+void updateMotorSpeed(uint32_t newMotorSpeed);
+
+[[noreturn]] void taskSensor(__attribute__((unused)) void *params);
 
 void setup() {
   ESP_LOGI(MAIN_TAG, "Setup!");
@@ -45,6 +53,14 @@ void setup() {
 
   digitalWrite(PIN_MOTOR2, LOW);
   motorStart();
+
+  xTaskCreate(
+      taskSensor,
+      "taskSensor",
+      10000,
+      nullptr,
+      1,
+      nullptr);
 }
 
 int rest = 0;
@@ -75,7 +91,10 @@ void loop() {
   }
 }
 
+bool isBlink = false;
+
 void blinkEye() {
+  isBlink = true;
   for (int i = EYE_MINIMUM; i < EYE_MAXIMUM; i += 36) {
     ledcWrite(CH_EYE, i);
     delay(100);
@@ -87,14 +106,57 @@ void blinkEye() {
     delay(100);
   }
   delay(300);
+  ledcWrite(CH_EYE, eyeBright);
+  isBlink = false;
 }
 
-void motorStart(uint32_t speed) {
+void motorStart() {
   ledcWrite(CH_MOTOR1, 255);
   delay(200);
-  ledcWrite(CH_MOTOR1, speed);
+  ledcWrite(CH_MOTOR1, motorSpeed);
 }
 
 void motorStop() {
   ledcWrite(CH_MOTOR1, 0);
+}
+
+void updateMotorSpeed(uint32_t newMotorSpeed) {
+  motorSpeed = newMotorSpeed;
+  ledcWrite(CH_MOTOR1, motorSpeed);
+}
+
+void taskSensor(__attribute__((unused)) void *params) {
+  while (true) {
+    auto volts = analogRead(PIN_SENSOR1) * 0.0008056640625;
+    auto cm = 29.988 * pow(volts, -1.173);
+
+    if (cm < 15) {
+      updateMotorSpeed(256);
+      eyeBright = EYE_MAXIMUM - 50;
+      if (!isBlink)
+        ledcWrite(CH_EYE, eyeBright);
+    } else if (cm < 30) {
+      updateMotorSpeed(MOTOR_SPEED_NORMAL + 96);
+      eyeBright = EYE_MAXIMUM - 100;
+      if (!isBlink)
+        ledcWrite(CH_EYE, eyeBright);
+    } else if (cm < 50) {
+      updateMotorSpeed(MOTOR_SPEED_NORMAL + 64);
+      eyeBright = EYE_MAXIMUM - 150;
+      if (!isBlink)
+        ledcWrite(CH_EYE, eyeBright);
+    } else if (cm < 80) {
+      updateMotorSpeed(MOTOR_SPEED_NORMAL + 32);
+      eyeBright = EYE_MAXIMUM - 190;
+      if (!isBlink)
+        ledcWrite(CH_EYE, eyeBright);
+    } else {
+      updateMotorSpeed(MOTOR_SPEED_NORMAL);
+      eyeBright = EYE_MINIMUM;
+      if (!isBlink)
+        ledcWrite(CH_EYE, eyeBright);
+    }
+
+    delay(100);
+  }
 }
