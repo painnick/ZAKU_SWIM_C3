@@ -68,7 +68,7 @@ int rest = 0;
 void loop() {
   rest = random(3);
 
-  bodyServo.easeTo(30, DEGREES_PER_SECOND);
+  bodyServo.easeTo(15, DEGREES_PER_SECOND);
   delay(2000);
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
@@ -79,7 +79,7 @@ void loop() {
     motorStart();
   }
 
-  bodyServo.easeTo(150, DEGREES_PER_SECOND);
+  bodyServo.easeTo(165, DEGREES_PER_SECOND);
   delay(2000);
 
   bodyServo.easeTo(90, DEGREES_PER_SECOND);
